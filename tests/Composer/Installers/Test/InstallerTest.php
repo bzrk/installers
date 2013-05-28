@@ -94,6 +94,7 @@ class InstallerTest extends TestCase
             array('codeigniter-app', true),
             array('croogo-plugin', true),
             array('croogo-theme', true),
+            array('custom', true),
             array('drupal-module', true),
             array('fuel-module', true),
             array('fuel-package', true),
@@ -177,7 +178,7 @@ class InstallerTest extends TestCase
             array('zend-extra', 'extras/library/zend_test/', 'shama/zend_test'),
         );
     }
-
+    
     /**
      * testGetCakePHPInstallPathException
      *
@@ -282,4 +283,32 @@ class InstallerTest extends TestCase
         $this->assertEquals('Packages/Application/TYPO3.Fluid/', $result);
     }
 
+    /**
+     * testCustomInstaller
+     */
+    public function testCustomInstallerException()
+    {
+        $installer = new Installer($this->io, $this->composer);
+        $package = new Package('Test/Test', '1.0.0', '1.0.0');
+        $package->setType('custom');
+        
+        $this->setExpectedException('InvalidArgumentException', 'Package type "custom" must set a custom install path');
+        $installer->getInstallPath($package);
+    }
+    
+    public function testCustomInstaller()
+    {
+        $installer = new Installer($this->io, $this->composer);
+        $package = new Package('test/test', '1.0.0', '1.0.0');
+        $package->setType('custom');
+        $consumerPackage = new RootPackage('test/test', '1.0.0', '1.0.0');
+        $this->composer->setPackage($consumerPackage);
+        $consumerPackage->setExtra(array(
+            'installer-paths' => array(
+                'my/custom/path/' => array('test/test'),
+            ),
+        ));
+        $result = $installer->getInstallPath($package);
+        $this->assertEquals('my/custom/path/', $result);
+    }
 }

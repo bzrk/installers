@@ -17,6 +17,7 @@ class Installer extends LibraryInstaller
         'cakephp'      => 'CakePHPInstaller',
         'codeigniter'  => 'CodeIgniterInstaller',
         'croogo'       => 'CroogoInstaller',
+        'custom'       => 'CustomInstaller',
         'drupal'       => 'DrupalInstaller',
         'fuel'         => 'FuelInstaller',
         'joomla'       => 'JoomlaInstaller',
@@ -66,6 +67,10 @@ class Installer extends LibraryInstaller
             return false;
         }
 
+        if($frameworkType === 'custom'){
+            return true;
+        }
+        
         return preg_match('#' . $frameworkType . '-(\w+)#', $packageType, $matches) === 1;
     }
 
